@@ -51,13 +51,11 @@ public class Tokenizer {
         //
         // Token 的 Value 应填写数字的值
         Pos prePos = it.currentPos();
-        char cur = it.nextChar();
         int ret = 0;
         while (!it.isEOF() && Character.isDigit(it.peekChar())) {
-            ret = ret * 10 + (cur - '0');
-            cur = it.nextChar();
+            ret = ret * 10 + (it.peekChar() - '0');
+            it.nextChar();
         }
-        ret = ret * 10 + (cur - '0');
         return new Token(TokenType.Uint, ret, prePos, it.currentPos());
     }
 
@@ -72,14 +70,13 @@ public class Tokenizer {
         //
         // Token 的 Value 应填写标识符或关键字的字符串
         Pos prePos = it.currentPos();
-        char cur = it.nextChar();
-        TokenType type;
         StringBuilder ret = new StringBuilder("");
+        TokenType type;
         while (!it.isEOF() && (Character.isAlphabetic(it.peekChar()) || Character.isDigit(it.peekChar()))) {
-            ret.append(cur);
-            cur = it.nextChar();
+            ret.append(it.peekChar());
+            it.nextChar();
         }
-        ret.append(cur);
+
         if (ret.toString().equals("begin"))
             type = TokenType.Begin;
         else if (ret.toString().equals("end"))
