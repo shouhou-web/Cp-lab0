@@ -256,19 +256,18 @@ public final class Analyser {
             // 变量初始化了吗
             boolean initialized = false;
             if (nextIf(TokenType.Equal) != null) {
-                initialized = true;
                 // 下个 token 是等于号吗？如果是的话分析初始化
-                expect(TokenType.Equal);
+                initialized = true;
+                // expect(TokenType.Equal);
                 // 分析初始化的表达式
                 analyseExpression();
-                // 分号
-                expect(TokenType.Semicolon);
 
                 // 加入符号表，请填写名字和当前位置（报错用）
                 String name = /* 名字 */ (String) nameToken.getValue();
-                addSymbol(name, initialized, false, /* 当前位置 */ nameToken.getStartPos());
+                addSymbol(name, true, false, /* 当前位置 */ nameToken.getStartPos());
             }
-
+            // 分号
+            expect(TokenType.Semicolon);
             // 如果没有初始化的话在栈里推入一个初始值
             if (!initialized) {
                 instructions.add(new Instruction(Operation.LIT, 0));
@@ -351,20 +350,20 @@ public final class Analyser {
         // 分析这个语句
 
         // 标识符是什么？
-        String name = null;
+        String name = peekedToken.getValueString();
         var symbol = symbolTable.get(name);
         if (symbol == null) {
             // 没有这个标识符
-            throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ null);
+            throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ peekedToken.getStartPos());
         } else if (symbol.isConstant) {
             // 标识符是常量
-            throw new AnalyzeError(ErrorCode.AssignToConstant, /* 当前位置 */ null);
+            throw new AnalyzeError(ErrorCode.AssignToConstant, /* 当前位置 */ peekedToken.getStartPos());
         }
         // 设置符号已初始化
-        initializeSymbol(name, null);
+        initializeSymbol(name, peekedToken.getStartPos());
 
         // 把结果保存
-        var offset = getOffset(name, null);
+        var offset = getOffset(name, peekedToken.getStartPos());
         instructions.add(new Instruction(Operation.STO, offset));
     }
 
@@ -391,7 +390,7 @@ public final class Analyser {
             // 预读可能是运算符的 token
 //            Token op = null;
             var op = peek();
-            if (op.getTokenType() != TokenType.Plus && op.getTokenType() != TokenType.Minus) {
+            if (op.getTokenType() != TokenType.Mult && op.getTokenType() != TokenType.Div) {
                 break;
             }
             // 运算符
@@ -424,25 +423,26 @@ public final class Analyser {
             // 是标识符
 
             // 加载标识符的值
-            String name = /* 快填 */ null;
+            String name = /* 快填 */ peekedToken.getValueString();
             var symbol = symbolTable.get(name);
             if (symbol == null) {
                 // 没有这个标识符
-                throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ null);
+                throw new AnalyzeError(ErrorCode.NotDeclared, /* 当前位置 */ peekedToken.getStartPos());
             } else if (!symbol.isInitialized) {
                 // 标识符没初始化
-                throw new AnalyzeError(ErrorCode.NotInitialized, /* 当前位置 */ null);
+                throw new AnalyzeError(ErrorCode.NotInitialized, /* 当前位置 */ peekedToken.getStartPos());
             }
-            var offset = getOffset(name, null);
+            var offset = getOffset(name, peekedToken.getStartPos());
             instructions.add(new Instruction(Operation.LOD, offset));
         } else if (check(TokenType.Uint)) {
             // 是整数
             // 加载整数值
-            int value = 0;
+            int value = (int) peekedToken.getValue();
             instructions.add(new Instruction(Operation.LIT, value));
         } else if (check(TokenType.LParen)) {
             // 是表达式
             // 调用相应的处理函数
+            analyseExpression();
         } else {
             // 都不是，摸了
             throw new ExpectedTokenError(List.of(TokenType.Ident, TokenType.Uint, TokenType.LParen), next());
@@ -451,6 +451,6 @@ public final class Analyser {
         if (negate) {
             instructions.add(new Instruction(Operation.SUB));
         }
-        throw new Error("Not implemented");
+//        throw new Error("Not implemented");
     }
 }

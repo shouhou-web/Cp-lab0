@@ -79,19 +79,19 @@ public class Tokenizer {
             it.nextChar();
         }
         switch (ret.toString()) {
-            case "Begin":
+            case "begin":
                 type = TokenType.Begin;
                 break;
-            case "End":
+            case "end":
                 type = TokenType.End;
                 break;
-            case "Var":
+            case "var":
                 type = TokenType.Var;
                 break;
-            case "Const":
+            case "const":
                 type = TokenType.Const;
                 break;
-            case "Print":
+            case "print":
                 type = TokenType.Print;
                 break;
             default:
