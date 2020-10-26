@@ -113,28 +113,35 @@ public class Tokenizer {
     }
 
     private Token lexOperatorOrUnknown() throws TokenizeError {
-        switch (it.nextChar()) {
+        switch (it.peekChar()) {
             case '+':
+                it.nextChar();
                 return new Token(TokenType.Plus, '+', it.previousPos(), it.currentPos());
-
             case '-':
                 // 填入返回语句
+                it.nextChar();
                 return new Token(TokenType.Minus, '-', it.previousPos(), it.currentPos());
             case '*':
                 // 填入返回语句
+                it.nextChar();
                 return new Token(TokenType.Mult, '*', it.previousPos(), it.currentPos());
 
             case '/':
                 // 填入返回语句
+                it.nextChar();
                 return new Token(TokenType.Div, '/', it.previousPos(), it.currentPos());
             // 填入更多状态和返回语句
             case '=':
+                it.nextChar();
                 return new Token(TokenType.Equal, '=', it.previousPos(), it.currentPos());
             case ';':
+                it.nextChar();
                 return new Token(TokenType.Semicolon, ';', it.previousPos(), it.currentPos());
             case '(':
+                it.nextChar();
                 return new Token(TokenType.LParen, '(', it.previousPos(), it.currentPos());
             case ')':
+                it.nextChar();
                 return new Token(TokenType.RParen, ')', it.previousPos(), it.currentPos());
             default:
                 // 不认识这个输入，摸了
