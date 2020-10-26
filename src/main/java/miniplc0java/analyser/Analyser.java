@@ -258,16 +258,16 @@ public final class Analyser {
             if (nextIf(TokenType.Equal) != null) {
                 // 下个 token 是等于号吗？如果是的话分析初始化
                 initialized = true;
-                // expect(TokenType.Equal);
+
                 // 分析初始化的表达式
                 analyseExpression();
-
-                // 加入符号表，请填写名字和当前位置（报错用）
-                String name = /* 名字 */ (String) nameToken.getValue();
-                addSymbol(name, true, false, /* 当前位置 */ nameToken.getStartPos());
             }
+
             // 分号
             expect(TokenType.Semicolon);
+            String name = /* 名字 */ (String) nameToken.getValue();
+            // 加入符号表，请填写名字和当前位置（报错用）
+            addSymbol(name, initialized, false, /* 当前位置 */ nameToken.getStartPos());
             // 如果没有初始化的话在栈里推入一个初始值
             if (!initialized) {
                 instructions.add(new Instruction(Operation.LIT, 0));
@@ -324,7 +324,7 @@ public final class Analyser {
 
         while (true) {
             // 预读可能是运算符的 token
-            var op = peek();
+            Token op = peek();
             if (op.getTokenType() != TokenType.Plus && op.getTokenType() != TokenType.Minus) {
                 break;
             }
@@ -388,8 +388,8 @@ public final class Analyser {
         analyseFactor();
         while (true) {
             // 预读可能是运算符的 token
-//            Token op = null;
-            var op = peek();
+            Token  op = peek();
+
             if (op.getTokenType() != TokenType.Mult && op.getTokenType() != TokenType.Div) {
                 break;
             }
