@@ -53,7 +53,7 @@ public class Tokenizer {
         Pos prePos = it.currentPos();
         char cur = it.nextChar();
         int ret = 0;
-        while (!it.isEOF() && Character.isDigit(cur)) {
+        while (!it.isEOF() && Character.isDigit(it.peekChar())) {
             ret = ret * 10 + (cur - '0');
             cur = it.nextChar();
         }
@@ -75,7 +75,7 @@ public class Tokenizer {
         char cur = it.nextChar();
         TokenType type;
         StringBuilder ret = new StringBuilder("");
-        while (!it.isEOF() && (Character.isAlphabetic(cur) || Character.isDigit(cur))) {
+        while (!it.isEOF() && (Character.isAlphabetic(it.peekChar()) || Character.isDigit(it.peekChar()))) {
             ret.append(cur);
             cur = it.nextChar();
         }
