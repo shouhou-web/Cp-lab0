@@ -50,13 +50,14 @@ public class Tokenizer {
         // 解析成功则返回无符号整数类型的token，否则返回编译错误
         //
         // Token 的 Value 应填写数字的值
-        char peek = it.peekChar();
-        int ret = 0;
         Pos prePos = it.currentPos();
-        while (!it.isEOF() && Character.isDigit(peek)) {
-            ret = ret * 10 + (peek - '0');
-            it.nextChar();
+        char cur = it.nextChar();
+        int ret = 0;
+        while (!it.isEOF() && Character.isDigit(cur)) {
+            ret = ret * 10 + (cur - '0');
+            cur = it.nextChar();
         }
+        ret = ret * 10 + (cur - '0');
         return new Token(TokenType.Uint, ret, prePos, it.currentPos());
     }
 
@@ -70,14 +71,15 @@ public class Tokenizer {
         // -- 否则，返回标识符
         //
         // Token 的 Value 应填写标识符或关键字的字符串
-        char peek = it.peekChar();
         Pos prePos = it.currentPos();
+        char cur = it.nextChar();
         TokenType type;
         StringBuilder ret = new StringBuilder("");
-        while (!it.isEOF() && (Character.isAlphabetic(peek) || Character.isDigit(peek))) {
-            ret.append(peek);
-            it.nextChar();
+        while (!it.isEOF() && (Character.isAlphabetic(cur) || Character.isDigit(cur))) {
+            ret.append(cur);
+            cur = it.nextChar();
         }
+        ret.append(cur);
         switch (ret.toString()) {
             case "begin":
                 type = TokenType.Begin;
