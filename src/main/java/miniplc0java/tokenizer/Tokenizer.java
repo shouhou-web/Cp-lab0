@@ -76,39 +76,27 @@ public class Tokenizer {
             ret.append(it.peekChar());
             it.nextChar();
         }
-
-        if (ret.toString().equals("begin"))
-            type = TokenType.Begin;
-        else if (ret.toString().equals("end"))
-            type = TokenType.End;
-        else if (ret.toString().equals("var"))
-            type = TokenType.Var;
-        else if (ret.toString().equals("const"))
-            type = TokenType.Const;
-        else if (ret.toString().equals("print"))
-            type = TokenType.Print;
-        else
-            type = TokenType.Ident;
-//        switch (ret.toString()) {
-//            case "begin":
-//                type = TokenType.Begin;
-//                break;
-//            case "end":
-//                type = TokenType.End;
-//                break;
-//            case "var":
-//                type = TokenType.Var;
-//                break;
-//            case "const":
-//                type = TokenType.Const;
-//                break;
-//            case "print":
-//                type = TokenType.Print;
-//                break;
-//            default:
-//                type = TokenType.Ident;
-//                break;
-//        }
+        
+        switch (ret.toString()) {
+            case "begin":
+                type = TokenType.Begin;
+                break;
+            case "end":
+                type = TokenType.End;
+                break;
+            case "var":
+                type = TokenType.Var;
+                break;
+            case "const":
+                type = TokenType.Const;
+                break;
+            case "print":
+                type = TokenType.Print;
+                break;
+            default:
+                type = TokenType.Ident;
+                break;
+        }
         return new Token(type, ret.toString(), prePos, it.currentPos());
     }
 
